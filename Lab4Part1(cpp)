@@ -1,0 +1,63 @@
+// ME 451 Lab 4  Part 1
+// Feb 11 2019
+#include <math.h>
+
+// Yellow - encoder A, interrupt = 2
+// White - Encoder B, interrupt = 3
+
+int forwards;
+int flag = 1;
+
+int interruptPinA = 2;
+int interruptPinB = 3;
+
+long a;
+long b;
+
+long i = 0;
+
+int ticks = 483;   // number of ticks per rev
+
+//float dtheta = 2 * pi / 483;
+
+long runtime;
+
+void setup() {
+  Serial.begin(9600);
+
+  attachInterrupt(digitalPinToInterrupt(interruptPinA), increment, RISING);
+
+  Serial.println("Ready");
+
+}
+
+void loop() {
+
+//  t1 = millis();
+//
+// 
+//  dt = t2 - t1;   // dt between ticks
+  
+    Serial.println(i);
+
+
+
+}
+
+
+
+///////////////////////////////incrementing
+int increment() {
+
+  b = digitalRead(interruptPinB);
+  if (b == LOW) {  // going forwards
+    i = i + 1;
+  }
+  else {       // going backwards
+    i = i - 1;
+  }
+
+//  t2 = runtime();
+
+  return i;
+}
