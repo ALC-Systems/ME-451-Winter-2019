@@ -1,0 +1,11 @@
+clear
+clc
+% ME 451 Lab 6 stuff
+% detector = vision.CascadeObjectDetector
+
+F = '1.JPG';
+
+I = imread(F);
+
+imshow(I);
+
