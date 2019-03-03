@@ -1,11 +1,18 @@
 clear
 clc
 % ME 451 Lab 6 stuff
-% detector = vision.CascadeObjectDetector
 
+% Part 1, detect faces in [ 1.jpg ]
+% Import Picture
 F = '1.JPG';
-
 I = imread(F);
+% detect faces and draw boxes
+facial = vision.CascadeObjectDetector;
+bboxes = facial(I);
+IFaces = insertObjectAnnotation(I,'rectangle',bboxes,'Face');   
+figure
+imshow(IFaces)
+title('Detected faces');
 
-imshow(I);
+
 
