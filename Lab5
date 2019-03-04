@@ -1,0 +1,139 @@
+// 451 Lab 5 PID Basic
+
+#include <PID_v1.h>
+
+#define PIN_INPUT
+#define PIN_OUTPUT
+
+#include <math.h>
+
+// connect motor controller pins to Arduino digital pins
+
+// motor one
+int enA = 10;
+int in1 = 9;
+int in2 = 8;
+
+int forwards;
+int flag = 1;
+
+// interrupts
+int interruptPinA = 2;
+int interruptPinB = 3;
+
+long a;
+long b;
+
+long i = 0;
+
+int ticks = 483;   // number of ticks per rev
+int dt = 5;
+float currenttick;
+float prevtick;
+int count;
+
+float Vinst;
+float dtheta, t1, t2;
+
+float res = 2 * 3.1415 / 483;
+
+long runtime;
+
+
+// bang bang variables
+
+int setpoint = 1500;
+
+//////////////////////// PID Setup
+
+//Define Variables we'll be connecting to
+double Setpoint = 1500;
+
+double Input, Output;
+
+//Specify the links and initial tuning parameters
+double Kp = 2, Ki = 5, Kd = 1;
+
+PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
+
+void setup()
+{
+  //initialize the variables we're linked to
+  Input = i;
+
+  //turn the PID on
+  myPID.SetMode(AUTOMATIC);
+
+  Serial.begin(9600);
+
+  attachInterrupt(digitalPinToInterrupt(interruptPinA), increment, RISING);
+  // set all the motor control pins to outputs
+  pinMode(enA, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+}
+
+void loop()
+{
+  Input = i;
+  myPID.Compute();
+
+  if ((i - 1500) < 0) {
+    forward(Output);
+  }
+  else if ((i - 1500) > 0) {
+    backward(Output);
+  }
+
+  runtime =  millis();
+  Serial.print(runtime);
+  Serial.print(",");
+  Serial.println(i);
+}
+
+
+/////////////////////////// functions
+
+void backward(int runspeed) {
+
+  // turn on motor
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  analogWrite(enA, runspeed);        // set the speed
+
+}
+
+
+void forward(int runspeed) {
+
+  // turn on motor
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  analogWrite(enA, runspeed);        // set the speed
+
+}
+
+void stopmotor() {
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+}
+
+
+
+///////////////////////////////incrementing
+int increment() {
+
+  b = digitalRead(interruptPinB);
+  if (b == LOW) {  // going forwards
+    i = i + 1;
+  }
+  else {       // going backwards
+    i = i - 1;
+  }
+
+  return i;
+}
+
+
+
+
